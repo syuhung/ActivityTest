@@ -4,16 +4,28 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import com.example.activitytest.databinding.FirstLayoutBinding
 
 
 class FirstActivity : AppCompatActivity() {
     private lateinit var binding: FirstLayoutBinding
-    private lateinit var resultLauncher: ActivityResultLauncher<Intent>
+
+    private var requestDataLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+
+        it -> if (it.resultCode == RESULT_OK) {
+            val data = it.data?.getStringExtra("data_return")
+            data?.let {
+                it -> Log.d("FirstActivity", it)
+            }
+
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +46,7 @@ class FirstActivity : AppCompatActivity() {
             val data = "Hello SecondActivity"
             val intent = Intent(this, SecondActivity::class.java)
             intent.putExtra("extra_data", data)
-            startActivityForResult(intent, 1)
+            requestDataLauncher.launch(intent)
         }
         setContentView(binding.root)
 
@@ -55,14 +67,5 @@ class FirstActivity : AppCompatActivity() {
         }
 
         return true
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        when(requestCode){
-            1 -> if (requestCode == RESULT_OK) {
-                val returnedData = data?.getStringExtra("data_extra")
-            }
-        }
     }
 }

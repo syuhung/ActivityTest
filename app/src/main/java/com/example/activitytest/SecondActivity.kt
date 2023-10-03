@@ -25,4 +25,12 @@ class SecondActivity : AppCompatActivity() {
         val extraData = intent.getStringExtra("extra_data")
         Log.d("SecondActivity", "extra data is $extraData")
     }
+
+    override fun onBackPressed() {
+        //super.onBackPressed()
+        val intent = Intent()
+        intent.putExtra("data_return", "Hello FirstActivity")
+        setResult(RESULT_OK, intent)
+        finish()
+    }
 }
